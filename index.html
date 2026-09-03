@@ -123,9 +123,35 @@ section{padding:120px 7vw;position:relative}.section-head{max-width:850px;margin
 @keyframes happyIn{from{opacity:0;transform:translateY(14px) rotate(-5deg)}to{opacity:1;transform:translateY(0) rotate(-2deg)}}
 @media(max-width:800px){.atom-bg{width:125vw;height:125vw;opacity:.29}.atom-core{width:58px;height:58px;margin:-29px;font-size:11px}.atom-ring i{width:11px;height:11px;margin-top:-5px}.happy-day{margin-bottom:18px}.happy-day:before,.happy-day:after{margin:0 7px}}
 @media(prefers-reduced-motion:reduce){.atom-ring,.atom-glow{animation:none}.happy-day{opacity:1;transform:rotate(-2deg)}}
+
+/* ===== Open-invitation gate ===== */
+body.gate-locked{overflow:hidden;height:100vh}
+.invite-gate{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;padding:30px;text-align:center;background:radial-gradient(circle at 50% 35%,#1c160f 0,#0c0b0a 45%,#050505 82%);transition:opacity .9s ease,visibility .9s ease}
+.invite-gate:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;background:radial-gradient(circle at 50% 38%,rgba(214,173,97,.14),transparent 62%)}
+.invite-gate.hide{opacity:0;visibility:hidden;pointer-events:none}
+.gate-inner{position:relative;z-index:2;max-width:480px}
+.gate-inner .eyebrow{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;opacity:.9}
+.gate-inner h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(34px,7vw,56px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;color:var(--ink)}
+.gate-inner h1 em{font-style:italic;color:var(--gold)}
+.gate-inner p{color:#b9b4aa;font-size:13px;line-height:1.85;max-width:400px;margin:0 auto 36px}
+.gate-btn{appearance:none;border:1px solid rgba(214,173,97,.72);background:linear-gradient(135deg,#d6ad61,#a87835);color:#0a0907;padding:18px 30px;border-radius:999px;display:inline-flex;align-items:center;gap:14px;font:600 11px Inter,system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 45px rgba(214,173,97,.18);transition:transform .35s,box-shadow .35s,filter .35s}
+.gate-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 18px 55px rgba(214,173,97,.3);filter:brightness(1.08)}
+.gate-btn:active{transform:translateY(-1px) scale(.98)}
+.gate-btn .btn-icon{font-size:15px}.gate-btn .btn-arrow{font-size:17px;transition:transform .3s}.gate-btn:hover .btn-arrow{transform:translateX(5px)}
+.gate-note{margin-top:24px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#716d65}
+@media(max-width:480px){.gate-inner h1{font-size:clamp(30px,9vw,44px)}}
 </style>
 </head>
-<body>
+<body class="gate-locked">
+<div class="invite-gate" id="inviteGate">
+  <div class="gate-inner">
+    <div class="eyebrow">Physics Wallah · Assam</div>
+    <h1>You've been<br><em>invited.</em></h1>
+    <p>A small invitation from a room full of students to the people who taught us to believe — best opened with the sound on.</p>
+    <button class="gate-btn" id="gateBtn" aria-label="Open the invitation"><span class="btn-icon">✦</span><span>Open the invitation</span><span class="btn-arrow">→</span></button>
+    <div class="gate-note">Tap to enter · sound on</div>
+  </div>
+</div>
 <div class="progress" id="progress"></div>
 <nav class="nav"><a class="brand" href="#top"><img src="pw-logo.png" alt="Physics Wallah logo"> Physics Wallah</a><div class="navlinks"><a href="#invitation">Invitation</a><a href="#tribute">Tribute</a><a href="#teachers">Teachers</a></div></nav>
 <header class="hero" id="top"><div id="particles"></div><div class="formula-field" id="formulaField"></div><div class="orb one"></div><div class="orb two"></div>
@@ -210,19 +236,19 @@ if(matchMedia('(pointer:fine)').matches){document.addEventListener('mousemove',e
 </script>
 
 <!-- Background music -->
-<audio id="bgm" autoplay loop preload="auto">
+<audio id="bgm" loop preload="auto">
   <source src="teachers-day.mp3" type="audio/mpeg">
 </audio>
 <script>
   const bgm = document.getElementById('bgm');
   bgm.volume = 0.45;
-  // Try autoplay immediately. If the browser blocks sound, start on the first interaction.
-  const startBgm = () => {
+  const gate = document.getElementById('inviteGate');
+  const gateBtn = document.getElementById('gateBtn');
+  gateBtn.addEventListener('click', () => {
     bgm.play().catch(() => {});
-  };
-  startBgm();
-  ['click','touchstart','keydown'].forEach(eventName => {
-    document.addEventListener(eventName, startBgm, { once: true, passive: true });
-  });
+    gate.classList.add('hide');
+    document.body.classList.remove('gate-locked');
+    setTimeout(() => gate.remove(), 1000);
+  }, { once: true });
 </script>
 </body></html>
